@@ -1,0 +1,86 @@
+{
+  "name": "gpu-monitoring-service",
+  "displayName": "GPU Monitoring Service",
+  "description": "Real-time NVIDIA GPU stats in a VS Code sidebar panel",
+  "version": "0.1.0",
+  "publisher": "Minato3000",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Minato3000/gpu-monitoring-service"
+  },
+  "keywords": ["nvidia", "gpu", "monitor", "sidebar"],
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "gpu-monitoring-service-container",
+          "title": "GPU Monitor",
+          "icon": "icons/gpu-monitor.svg"
+        }
+      ]
+    },
+    "views": {
+      "gpu-monitoring-service-container": [
+        {
+          "type": "webview",
+          "id": "nvidiagpumonitor.panel",
+          "name": "NVIDIA GPU Stats",
+          "icon": "icons/gpu-monitor.svg",
+          "contextualTitle": "GPU Monitor"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "nvidiagpumonitor.refresh",
+        "title": "GPU Monitor: Force Refresh",
+        "icon": "$(refresh)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "nvidiagpumonitor.refresh",
+          "when": "view == nvidiagpumonitor.panel",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "NVIDIA GPU Monitor",
+      "properties": {
+        "nvidiagpumonitor.refreshInterval": {
+          "type": "number",
+          "default": 2000,
+          "minimum": 500,
+          "maximum": 30000,
+          "description": "Polling interval in milliseconds (default: 2000ms)"
+        },
+        "nvidiagpumonitor.nvidiaSmiPath": {
+          "type": "string",
+          "default": "nvidia-smi",
+          "description": "Path to the nvidia-smi executable"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.80.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "@vscode/vsce": "^2.15.0"
+  }
+}
