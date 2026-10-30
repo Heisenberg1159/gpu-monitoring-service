@@ -1,70 +1,83 @@
 {
-  "name": "gpu-monitoring-service",
-  "displayName": "GPU Monitoring Service",
-  "description": "Real-time NVIDIA GPU stats in a VS Code sidebar panel",
-  "version": "0.1.0",
-  "publisher": "Minato3000",
+  "name": "NV-MutI-GPU-Monitor",
+  "displayName": "Multi-GPU Monitor",
+  "description": "Compact real-time NVIDIA GPU monitor for multi-GPU machines, in the VS Code sidebar or panel. Fork of GPU Monitoring Service by Minato3000.",
+  "version": "0.2.0",
+  "publisher": "Heisenberg1159",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Minato3000/gpu-monitoring-service"
+    "url": "https://github.com/Heisenberg1159/gpu-monitoring-service"
   },
-  "keywords": ["nvidia", "gpu", "monitor", "sidebar"],
+  "keywords": [
+    "nvidia",
+    "gpu",
+    "multi-gpu",
+    "nvidia-smi",
+    "cuda",
+    "monitor",
+    "remote-ssh"
+  ],
   "engines": {
     "vscode": "^1.80.0"
   },
-  "categories": ["Other"],
+  "categories": [
+    "Other"
+  ],
+  "extensionKind": [
+    "workspace"
+  ],
   "activationEvents": [],
-  "icon": "icons/gpu-monitor.png",
+  "icon": "icon.png",
   "main": "./out/extension.js",
   "contributes": {
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "gpu-monitoring-service-container",
-          "title": "GPU Monitor",
+          "id": "multi-gpu-monitor",
+          "title": "Multi-GPU Monitor",
           "icon": "icons/gpu-monitor.svg"
         }
       ]
     },
     "views": {
-      "gpu-monitoring-service-container": [
+      "multi-gpu-monitor": [
         {
           "type": "webview",
-          "id": "nvidiagpumonitor.panel",
-          "name": "NVIDIA GPU Stats",
+          "id": "multiGpuMonitor.panel",
+          "name": "GPUs",
           "icon": "icons/gpu-monitor.svg",
-          "contextualTitle": "GPU Monitor"
+          "contextualTitle": "Multi-GPU Monitor"
         }
       ]
     },
     "commands": [
       {
-        "command": "nvidiagpumonitor.refresh",
-        "title": "GPU Monitor: Force Refresh",
+        "command": "multiGpuMonitor.refresh",
+        "title": "Multi-GPU Monitor: Refresh",
         "icon": "$(refresh)"
       }
     ],
     "menus": {
       "view/title": [
         {
-          "command": "nvidiagpumonitor.refresh",
-          "when": "view == nvidiagpumonitor.panel",
+          "command": "multiGpuMonitor.refresh",
+          "when": "view == multiGpuMonitor.panel",
           "group": "navigation"
         }
       ]
     },
     "configuration": {
-      "title": "NVIDIA GPU Monitor",
+      "title": "Multi-GPU Monitor",
       "properties": {
-        "nvidiagpumonitor.refreshInterval": {
+        "multiGpuMonitor.refreshInterval": {
           "type": "number",
           "default": 2000,
           "minimum": 500,
           "maximum": 30000,
           "description": "Polling interval in milliseconds (default: 2000ms)"
         },
-        "nvidiagpumonitor.nvidiaSmiPath": {
+        "multiGpuMonitor.nvidiaSmiPath": {
           "type": "string",
           "default": "nvidia-smi",
           "description": "Path to the nvidia-smi executable"

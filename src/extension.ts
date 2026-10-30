@@ -414,7 +414,7 @@ function getWebviewContent(): string {
 }
 
 class GpuMonitorViewProvider implements vscode.WebviewViewProvider {
-  public static readonly viewType = 'nvidiagpumonitor.panel';
+  public static readonly viewType = 'multiGpuMonitor.panel';
 
   private _view?: vscode.WebviewView;
   private _intervalHandle?: ReturnType<typeof setInterval>;
@@ -459,7 +459,7 @@ class GpuMonitorViewProvider implements vscode.WebviewViewProvider {
 
   private _startPolling(): void {
     this._stopPolling();
-    const config = vscode.workspace.getConfiguration('nvidiagpumonitor');
+    const config = vscode.workspace.getConfiguration('multiGpuMonitor');
     const interval = config.get<number>('refreshInterval', 2000);
     this._smiPath = config.get<string>('nvidiaSmiPath', 'nvidia-smi');
 
@@ -514,14 +514,14 @@ export function activate(context: vscode.ExtensionContext): void {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand('nvidiagpumonitor.refresh', () => {
+    vscode.commands.registerCommand('multiGpuMonitor.refresh', () => {
       provider?.forceRefresh();
     })
   );
 
   context.subscriptions.push(
     vscode.workspace.onDidChangeConfiguration(e => {
-      if (e.affectsConfiguration('nvidiagpumonitor')) {
+      if (e.affectsConfiguration('multiGpuMonitor')) {
         provider?.restartPolling();
       }
     })
