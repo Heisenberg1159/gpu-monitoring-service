@@ -1,8 +1,8 @@
 {
   "name": "NV-MutI-GPU-Monitor",
-  "displayName": "Multi-GPU Monitor",
+  "displayName": "GPUM",
   "description": "Compact real-time NVIDIA GPU monitor for multi-GPU machines, in the VS Code sidebar or panel. Fork of GPU Monitoring Service by Minato3000.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "publisher": "Heisenberg1159",
   "license": "MIT",
   "repository": {
@@ -34,50 +34,50 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "multi-gpu-monitor",
-          "title": "Multi-GPU Monitor",
+          "id": "gpum",
+          "title": "GPUM",
           "icon": "icons/gpu-monitor.svg"
         }
       ]
     },
     "views": {
-      "multi-gpu-monitor": [
+      "gpum": [
         {
           "type": "webview",
-          "id": "multiGpuMonitor.panel",
+          "id": "gpum.panel",
           "name": "GPUs",
           "icon": "icons/gpu-monitor.svg",
-          "contextualTitle": "Multi-GPU Monitor"
+          "contextualTitle": "GPUM"
         }
       ]
     },
     "commands": [
       {
-        "command": "multiGpuMonitor.refresh",
-        "title": "Multi-GPU Monitor: Refresh",
+        "command": "gpum.refresh",
+        "title": "GPUM: Refresh",
         "icon": "$(refresh)"
       }
     ],
     "menus": {
       "view/title": [
         {
-          "command": "multiGpuMonitor.refresh",
-          "when": "view == multiGpuMonitor.panel",
+          "command": "gpum.refresh",
+          "when": "view == gpum.panel",
           "group": "navigation"
         }
       ]
     },
     "configuration": {
-      "title": "Multi-GPU Monitor",
+      "title": "GPUM",
       "properties": {
-        "multiGpuMonitor.refreshInterval": {
+        "gpum.refreshInterval": {
           "type": "number",
           "default": 2000,
           "minimum": 500,
           "maximum": 30000,
           "description": "Polling interval in milliseconds (default: 2000ms)"
         },
-        "multiGpuMonitor.nvidiaSmiPath": {
+        "gpum.nvidiaSmiPath": {
           "type": "string",
           "default": "nvidia-smi",
           "description": "Path to the nvidia-smi executable"

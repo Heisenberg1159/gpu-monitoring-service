@@ -137,6 +137,7 @@ function getWebviewContent(): string {
       line-height: 22px;
     }
     #summary .totals { color: var(--dim); }
+    #clock { color: var(--dim); margin-right: auto; padding-right: 16px; }
 
     /* ---------- meters ---------- */
     .m { display: flex; align-items: center; gap: 6px; min-width: 0; }
@@ -234,7 +235,11 @@ function getWebviewContent(): string {
 <body>
   <div id="loading">Waiting for nvidia-smi…</div>
   <div id="error" class="hidden"></div>
-  <div id="summary" class="hidden"><span id="sum-name"></span><span id="sum-totals" class="totals num"></span></div>
+  <div id="summary">
+    <span id="clock" class="num"></span>
+    <span id="sum-name" class="hidden"></span>
+    <span id="sum-totals" class="totals num"></span>
+  </div>
   <div id="gpus" class="hidden">
     <div class="head">
       <span style="grid-area:idx">#</span>
@@ -319,7 +324,7 @@ function getWebviewContent(): string {
       setText(r.idx, String(g.index));
       setText(r.gname, 'GPU ' + g.index);
       setText(r.name, shortName(g.name));
-      if (row.el.title !== g.name + '\\n' + g.uuid) { row.el.title = g.name + '\\n' + g.uuid; }
+      if (row.el.title !== g.name) { row.el.title = g.name; }
       setText(r.procs, procCount > 0 ? String(procCount) : '');
       setText(r.temp, isNaN(g.temperature) ? '–' : g.temperature + '°C');
       const tl = level(g.temperature, 75, 85);
@@ -393,7 +398,7 @@ function getWebviewContent(): string {
 
       toggle($('loading'), false);
       toggle($('error'), !ok);
-      toggle($('summary'), ok);
+      toggle($('sum-name'), ok);
       toggle($('gpus'), ok);
       if (!ok) {
         setText($('error'), 'nvidia-smi failed: ' + data.error);
@@ -406,6 +411,16 @@ function getWebviewContent(): string {
       renderProcs(data.processes || []);
     });
 
+    // Local clock, ticking independently of the (change-only) GPU updates.
+    function pad(n) { return n < 10 ? '0' + n : String(n); }
+    function tickClock() {
+      const d = new Date();
+      setText($('clock'), d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + ' ' +
+        pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds()));
+    }
+    tickClock();
+    setInterval(tickClock, 1000);
+
     // Ask for the latest snapshot whenever the webview is (re)created.
     vscode.postMessage({ type: 'ready' });
   </script>
@@ -414,7 +429,7 @@ function getWebviewContent(): string {
 }
 
 class GpuMonitorViewProvider implements vscode.WebviewViewProvider {
-  public static readonly viewType = 'multiGpuMonitor.panel';
+  public static readonly viewType = 'gpum.panel';
 
   private _view?: vscode.WebviewView;
   private _intervalHandle?: ReturnType<typeof setInterval>;
@@ -459,7 +474,7 @@ class GpuMonitorViewProvider implements vscode.WebviewViewProvider {
 
   private _startPolling(): void {
     this._stopPolling();
-    const config = vscode.workspace.getConfiguration('multiGpuMonitor');
+    const config = vscode.workspace.getConfiguration('gpum');
     const interval = config.get<number>('refreshInterval', 2000);
     this._smiPath = config.get<string>('nvidiaSmiPath', 'nvidia-smi');
 
@@ -514,14 +529,14 @@ export function activate(context: vscode.ExtensionContext): void {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand('multiGpuMonitor.refresh', () => {
+    vscode.commands.registerCommand('gpum.refresh', () => {
       provider?.forceRefresh();
     })
   );
 
   context.subscriptions.push(
     vscode.workspace.onDidChangeConfiguration(e => {
-      if (e.affectsConfiguration('multiGpuMonitor')) {
+      if (e.affectsConfiguration('gpum')) {
         provider?.restartPolling();
       }
     })
